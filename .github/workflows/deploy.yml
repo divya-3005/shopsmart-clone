@@ -1,0 +1,33 @@
+name: Deploy to EC2
+
+on:
+  workflow_dispatch: # Allows manual trigger
+  # uncomment below to trigger on push to main
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            cd ~/shopsmart
+            git pull origin main
+            chmod +x dev-setup.sh
+            ./dev-setup.sh
+            cd server
+            npm ci
+            pm2 restart all || pm2 start src/index.js --name "shopsmart-api"
+            cd ../client
+            npm ci
+            npm run build
