@@ -24,8 +24,8 @@ describe('App Component', () => {
 
     render(<App />)
 
-    // Check header
-    expect(screen.getByText(/ShopSmart/i)).toBeInTheDocument()
+    // Check header (using getAllByText because 'ShopSmart' text exists in both header and footer)
+    expect(screen.getAllByText(/ShopSmart/i)[0]).toBeInTheDocument()
     
     // Check product renders
     expect(screen.getByText(/Wireless Headphones/i)).toBeInTheDocument()
