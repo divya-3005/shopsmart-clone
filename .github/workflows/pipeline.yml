@@ -25,14 +25,14 @@ jobs:
       - name: Install & Test Server
         run: |
           cd server
-          npm install
+          npm install --no-audit --no-fund
           npm test
           npm run test:integration
 
       - name: Install & Test Client
         run: |
           cd client
-          npm install
+          npm install --no-audit --no-fund
           npm run test
 
   terraform:
@@ -58,7 +58,9 @@ jobs:
         run: |
           cd terraform
           terraform init
-          terraform apply -auto-approve
+          terraform validate
+          terraform plan -out=tfplan
+          terraform apply -auto-approve tfplan
 
   deploy:
     name: Phase 3 - Container & ECS
