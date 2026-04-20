@@ -47,7 +47,7 @@ data "aws_ami" "amazon_linux_2023" {
 
 resource "aws_instance" "mgmt_server" {
   ami           = data.aws_ami.amazon_linux_2023.id
-  instance_type = "t3.micro"
+  instance_type = "t2.micro"
   
   subnet_id                   = data.aws_subnets.default.ids[0]
   vpc_security_group_ids      = [aws_security_group.ecs_sg.id]
