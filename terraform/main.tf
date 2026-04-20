@@ -53,9 +53,8 @@ resource "aws_instance" "mgmt_server" {
   vpc_security_group_ids      = [aws_security_group.ecs_sg.id]
   associate_public_ip_address = true
   
-  # Note: In a real lab, you'd specify a key_name. 
-  # We use a placeholder here or rely on SSM.
-  # key_name      = "vockey" 
+  # Standard key name for AWS Academy Learner Labs
+  key_name      = "vockey" 
 
   tags = {
     Name    = "shopsmart-mgmt-server"
