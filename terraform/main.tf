@@ -9,15 +9,14 @@ provider "aws" {
 # To make this fully idempotent across multiple GitHub Action runs, you MUST
 # create an S3 bucket in AWS first, then uncomment and update the block below:
 # ------------------------------------------------------------------------------
-# terraform {
-#   backend "s3" {
-#     bucket         = "YOUR-UNIQUE-S3-BUCKET-NAME"
-#     key            = "shopsmart/terraform.tfstate"
-#     region         = "us-east-1"
-#     # dynamodb_table = "terraform-state-lock" # Optional but recommended
-#     encrypt        = true
-#   }
-# }
+terraform {
+  backend "s3" {
+    bucket         = "shopsmart-v2-storage-40c9dfe6"
+    key            = "shopsmart/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+  }
+}
 
 
 # ------------------------------------------------------------------------------

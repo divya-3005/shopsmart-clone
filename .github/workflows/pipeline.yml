@@ -57,8 +57,14 @@ jobs:
       - name: Terraform Init & Apply
         run: |
           cd terraform
-          terraform init
+          terraform init -reconfigure
           terraform validate
+          # "Adopt" existing resources into the new remote state if they exist
+          terraform import aws_ecr_repository.app_repo shopsmart-v2-repo || true
+          terraform import aws_cloudwatch_log_group.ecs_logs /ecs/shopsmart-v2 || true
+          terraform import aws_ecs_cluster.app_cluster shopsmart-v2-cluster || true
+          terraform import aws_security_group.ecs_sg $(aws ec2 describe-security-groups --filters Name=group-name,Values=shopsmart-v2-ecs-sg --query "SecurityGroups[0].GroupId" --output text) || true
+          terraform import aws_s3_bucket.app_storage shopsmart-v2-storage-40c9dfe6 || true
           terraform plan -out=tfplan
           terraform apply -auto-approve tfplan
 
