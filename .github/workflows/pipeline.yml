@@ -136,11 +136,17 @@ jobs:
           npm run test:e2e
         continue-on-error: true
 
+      - name: Fetch EC2 Management Server IP
+        id: get-ip
+        run: |
+          IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=shopsmart-mgmt-server" "Name=instance-state-name,Values=running" --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+          echo "ip=$IP" >> $GITHUB_OUTPUT
+
       - name: EC2 Integration - Remote Status Check (Midsem Rubric #9)
         uses: appleboy/ssh-action@v1.0.3
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.get-ip.outputs.ip != 'None'
         with:
-          host: ${{ vars.EC2_HOST }} # User can configure this or I can find it via AWS CLI
+          host: ${{ steps.get-ip.outputs.ip }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
