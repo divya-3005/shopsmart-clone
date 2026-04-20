@@ -41,28 +41,10 @@ resource "aws_ecs_cluster" "app_cluster" {
 }
 
 # ------------------------------------------------------------------------------
-# IAM ROLES
+# IAM ROLES (Using existing LabRole provided by AWS Learner Lab)
 # ------------------------------------------------------------------------------
-resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "${var.project_name}-ecs-task-execution-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
-  role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+data "aws_iam_role" "lab_role" {
+  name = "LabRole"
 }
 
 # ------------------------------------------------------------------------------
@@ -82,7 +64,7 @@ resource "aws_ecs_task_definition" "app_task" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = 256
   memory                   = 512
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = data.aws_iam_role.lab_role.arn
 
   # We use the ECR repository URL, but with a 'latest' tag. 
   # For the very first terraform apply, if the image isn't pushed to ECR yet, 
