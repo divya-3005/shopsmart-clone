@@ -138,7 +138,7 @@ jobs:
           echo "ip=$IP" >> $GITHUB_OUTPUT
 
       - name: EC2 Integration - Remote Status Check (Midsem Rubric #9)
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.5
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.get-ip.outputs.ip != 'None' && env.HAS_SSH_KEY == 'true'
         env:
           HAS_SSH_KEY: ${{ secrets.EC2_SSH_KEY != '' }}
